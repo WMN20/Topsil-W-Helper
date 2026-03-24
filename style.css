@@ -1,0 +1,32 @@
+body {
+    font-family: Arial;
+    padding: 20px;
+    background: #f3f3f3;
+}
+
+.section {
+    background: white;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+textarea, input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+button {
+    padding: 8px 12px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.templateItem {
+    background: #e8e8e8;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+``
