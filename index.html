@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>W-Helper</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>W-Helper</h1>
+
+    <div class="section">
+        <h2>Email Templates</h2>
+        <textarea id="templateInput" placeholder="Write your template here..."></textarea>
+        <input id="templateName" placeholder="Template name">
+        <button onclick="addTemplate()">Add Template</button>
+
+        <div id="templateList"></div>
+    </div>
+
+    <div class="section">
+        <h2>Open Folder</h2>
+        <input id="folderPath" placeholder="C:\\Path\\To\\Folder">
+        <button onclick="saveFolderPath()">Save Folder Path</button>
+        <button onclick="openFolder()">Open Folder</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
