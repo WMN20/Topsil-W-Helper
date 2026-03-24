@@ -1,5 +1,5 @@
 //------------------------------------------------
-// EMAIL TEMPLATES
+// EMAIL TEMPLATES (Saves in localStorage)
 //------------------------------------------------
 
 function loadTemplates() {
@@ -28,6 +28,7 @@ function addTemplate() {
 
     const templates = JSON.parse(localStorage.getItem("templates") || "[]");
     templates.push({ name, text });
+
     localStorage.setItem("templates", JSON.stringify(templates));
 
     document.getElementById("templateName").value = "";
@@ -51,7 +52,7 @@ function deleteTemplate(index) {
 
 
 //------------------------------------------------
-// FOLDER PATH SHORTCUTS (COPY ONLY)
+// FOLDER PATH SHORTCUTS (Also saved in localStorage)
 //------------------------------------------------
 
 function loadFolderShortcuts() {
@@ -76,10 +77,11 @@ function addFolderShortcut() {
     const name = document.getElementById("folderName").value.trim();
     const path = document.getElementById("folderPath").value.trim();
 
-    if (!name || !path) return alert("Enter name and folder path.");
+    if (!name || !path) return alert("Enter name and path.");
 
     const folders = JSON.parse(localStorage.getItem("folders") || "[]");
     folders.push({ name, path });
+
     localStorage.setItem("folders", JSON.stringify(folders));
 
     document.getElementById("folderName").value = "";
@@ -103,10 +105,11 @@ function deleteFolderShortcut(index) {
 
 
 //------------------------------------------------
-// INIT
+// INIT — Loads saved data on every refresh
 //------------------------------------------------
 
 window.onload = () => {
     loadTemplates();
     loadFolderShortcuts();
 };
+``
