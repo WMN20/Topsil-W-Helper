@@ -1,58 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
-    <title>W-Helper</title>
+    <title>W‑Helper</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav class="tabs">
     <button class="tab-btn active" data-tab="emailTab">Email</button>
-    <button class="tab-btn" data-tab="fileTab">File Paths</button>
-    <button class="tab-btn" data-tab="todoTab">To‑Do</button>
-    <button class="tab-btn" data-tab="datesTab">Dates</button>
+    <button class="tab-btn" data-tab="fileTab">Filstier</button>
+    <button class="tab-btn" data-tab="todoTab">Sticky Notes</button>
+    <button class="tab-btn" data-tab="datesTab">Datoer</button>
 </nav>
 
 <main>
 
     <!-- EMAIL -->
     <section id="emailTab" class="tab-page active">
-        <h2>Email Templates</h2>
+        <h2>Email‑skabeloner</h2>
         <div class="input-area">
-            <input id="templateName" placeholder="Template name">
-            <textarea id="templateInput" placeholder="Email text..."></textarea>
-            <button onclick="addTemplate()">Add</button>
+            <input id="templateName" placeholder="Navn">
+            <textarea id="templateInput" placeholder="Email‑tekst..."></textarea>
+            <button onclick="addTemplate()">Tilføj</button>
         </div>
         <div id="templateList" class="item-list"></div>
     </section>
 
-    <!-- FILE PATHS -->
+    <!-- FILE PATH -->
     <section id="fileTab" class="tab-page">
-        <h2>File Path Templates</h2>
+        <h2>Filstier</h2>
         <div class="input-area">
-            <input id="folderName" placeholder="Path name">
-            <input id="folderPath" placeholder="C:\\Folder\\Path">
-            <button onclick="addFolder()">Add</button>
+            <input id="folderName" placeholder="Navn">
+            <input id="folderPath" placeholder="C:\Sti\Til\Mappe">
+            <button onclick="addFolder()">Tilføj</button>
         </div>
         <div id="folderList" class="item-list"></div>
     </section>
 
-    <!-- TODO -->
+    <!-- STICKY NOTES -->
     <section id="todoTab" class="tab-page">
         <h2>Sticky Notes</h2>
-        <button onclick="addNote()">Add Sticky Note</button>
+        <button onclick="addNote()">➕ Ny note</button>
         <div id="todoBoard" class="todo-board"></div>
     </section>
 
     <!-- DATES -->
     <section id="datesTab" class="tab-page">
-        <h2>Important Dates</h2>
+        <h2>Vigtige datoer</h2>
         <div class="input-area">
-            <input id="dateTitle" placeholder="What happens?">
+            <input id="dateTitle" placeholder="Hvad sker der?">
             <input type="date" id="dateValue">
             <input type="time" id="timeValue">
-            <button onclick="addDate()">Add Date</button>
+            <button onclick="addDate()">Tilføj dato</button>
         </div>
         <div id="datesList" class="item-list"></div>
     </section>
