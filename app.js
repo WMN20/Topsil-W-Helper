@@ -1,210 +1,163 @@
-//---------------------------------------------------
-// TAB SYSTEM
-//---------------------------------------------------
-const tabButtons = document.querySelectorAll(".tab-btn");
-const tabPages = document.querySelectorAll(".tab-page");
-
-tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
+//------------------------------------------------
+// TABS
+//------------------------------------------------
+document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.onclick = () => {
         document.querySelector(".tab-btn.active").classList.remove("active");
-        btn.classList.add("active");
-
         document.querySelector(".tab-page.active").classList.remove("active");
+        btn.classList.add("active");
         document.getElementById(btn.dataset.tab).classList.add("active");
-    });
+    }
 });
 
-
-//---------------------------------------------------
+//------------------------------------------------
 // EMAIL TEMPLATES
-//---------------------------------------------------
+//------------------------------------------------
 function loadTemplates() {
     const list = document.getElementById("templateList");
     list.innerHTML = "";
-
-    const templates = JSON.parse(localStorage.getItem("templates") || "[]");
-
-    templates.forEach((tpl, i) => {
-        const div = document.createElement("div");
-        div.className = "templateItem";
-        div.innerHTML = `
-            <b>${tpl.name}</b><br>
-            <button onclick="copyTemplate(${i})">Copy</button>
-            <button onclick="deleteTemplate(${i})">Delete</button>
-        `;
-        list.appendChild(div);
+    const data = JSON.parse(localStorage.getItem("templates") || "[]");
+    data.forEach((t, i) => {
+        list.innerHTML += `
+            <div class="card">
+                <b>${t.name}</b><br>
+                <button onclick="navigator.clipboard.writeText(\`${t.text}\`)">Copy</button>
+                <button onclick="deleteItem('templates',${i},loadTemplates)">Delete</button>
+            </div>`;
     });
 }
 
 function addTemplate() {
-    const name = document.getElementById("templateName").value.trim();
-    const text = document.getElementById("templateInput").value.trim();
-
-    if (!name || !text) return alert("Enter name and template text.");
-
-    let templates = JSON.parse(localStorage.getItem("templates") || "[]");
-    templates.push({ name, text });
-
-    localStorage.setItem("templates", JSON.stringify(templates));
-
+    saveItem("templates", {
+        name: templateName.value,
+        text: templateInput.value
+    });
+    templateName.value = templateInput.value = "";
     loadTemplates();
 }
 
-function copyTemplate(i) {
-    const templates = JSON.parse(localStorage.getItem("templates") || "[]");
-    navigator.clipboard.writeText(templates[i].text);
-}
-
-function deleteTemplate(i) {
-    let templates = JSON.parse(localStorage.getItem("templates") || "[]");
-    templates.splice(i, 1);
-    localStorage.setItem("templates", JSON.stringify(templates));
-    loadTemplates();
-}
-
-
-//---------------------------------------------------
-// FILE PATH TEMPLATES
-//---------------------------------------------------
-function loadFolderShortcuts() {
-    const list = document.getElementById("folderList");
+//------------------------------------------------
+// FILE PATHS
+//------------------------------------------------
+function loadFolders() {
+    const list = folderList;
     list.innerHTML = "";
-
-    const folders = JSON.parse(localStorage.getItem("folders") || "[]");
-
-    folders.forEach((fp, i) => {
-        const div = document.createElement("div");
-        div.className = "templateItem";
-        div.innerHTML = `
-            <b>${fp.name}</b><br>
-            <button onclick="copyFolderPath(${i})">Copy Path</button>
-            <button onclick="deleteFolderShortcut(${i})">Delete</button>
-        `;
-        list.appendChild(div);
+    const data = JSON.parse(localStorage.getItem("folders") || "[]");
+    data.forEach((f, i) => {
+        list.innerHTML += `
+            <div class="card">
+                <b>${f.name}</b><br>
+                <button onclick="navigator.clipboard.writeText(\`${f.path}\`)">Copy Path</button>
+                <button onclick="deleteItem('folders',${i},loadFolders)">Delete</button>
+            </div>`;
     });
 }
 
-function addFolderShortcut() {
-    const name = document.getElementById("folderName").value.trim();
-    const path = document.getElementById("folderPath").value.trim();
-
-    if (!name || !path) return alert("Enter name and path.");
-
-    let folders = JSON.parse(localStorage.getItem("folders") || "[]");
-    folders.push({ name, path });
-
-    localStorage.setItem("folders", JSON.stringify(folders));
-
-    loadFolderShortcuts();
+function addFolder() {
+    saveItem("folders", {
+        name: folderName.value,
+        path: folderPath.value
+    });
+    folderName.value = folderPath.value = "";
+    loadFolders();
 }
 
-function copyFolderPath(i) {
-    const folders = JSON.parse(localStorage.getItem("folders") || "[]");
-    navigator.clipboard.writeText(folders[i].path);
-}
-
-function deleteFolderShortcut(i) {
-    let folders = JSON.parse(localStorage.getItem("folders") || "[]");
-    folders.splice(i, 1);
-    localStorage.setItem("folders", JSON.stringify(folders));
-    loadFolderShortcuts();
-}
-
-
-//---------------------------------------------------
-// STICKY NOTES + DRAG & DROP + SAVE
-//---------------------------------------------------
+//------------------------------------------------
+// TODO NOTES
+//------------------------------------------------
 function loadNotes() {
-    const board = document.getElementById("todoBoard");
+    const board = todoBoard;
     board.innerHTML = "";
-
-    const notes = JSON.parse(localStorage.getItem("notes") || "[]");
-
-    notes.forEach((n, i) => createNoteElement(n, i));
+    JSON.parse(localStorage.getItem("notes") || "[]")
+        .forEach((n, i) => createNote(n, i));
 }
 
 function addNote() {
-    let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-    const newNote = {
-        title: "New Task",
-        text: "",
-        x: 50,
-        y: 50
-    };
-    notes.push(newNote);
-    localStorage.setItem("notes", JSON.stringify(notes));
-
+    saveItem("notes", { text: "", x: 50, y: 50 });
     loadNotes();
 }
 
-function createNoteElement(note, index) {
-    const board = document.getElementById("todoBoard");
-
+function createNote(n, i) {
     const div = document.createElement("div");
     div.className = "note";
-    div.style.left = note.x + "px";
-    div.style.top = note.y + "px";
-
-    div.innerHTML = `
-        <h4 contenteditable="true" oninput="updateNoteTitle(${index}, this.innerText)">${note.title}</h4>
-        <textarea oninput="updateNoteText(${index}, this.value)">${note.text}</textarea>
-        <button onclick="deleteNote(${index})">Delete</button>
-    `;
-
-    enableDrag(div, index);
-    board.appendChild(div);
+    div.style.left = n.x + "px";
+    div.style.top = n.y + "px";
+    div.innerHTML = `<textarea oninput="updateNote(${i},this.value)">${n.text}</textarea>`;
+    enableDrag(div, i);
+    todoBoard.appendChild(div);
 }
 
-function updateNoteTitle(i, text) {
-    let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-    notes[i].title = text;
-    localStorage.setItem("notes", JSON.stringify(notes));
+function updateNote(i, v) {
+    let n = JSON.parse(localStorage.getItem("notes"));
+    n[i].text = v;
+    localStorage.setItem("notes", JSON.stringify(n));
 }
 
-function updateNoteText(i, text) {
-    let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-    notes[i].text = text;
-    localStorage.setItem("notes", JSON.stringify(notes));
+function enableDrag(el, i) {
+    el.onmousedown = e => {
+        document.onmousemove = ev => {
+            el.style.left = ev.clientX - 100 + "px";
+            el.style.top = ev.clientY - 20 + "px";
+            let n = JSON.parse(localStorage.getItem("notes"));
+            n[i].x = el.offsetLeft;
+            n[i].y = el.offsetTop;
+            localStorage.setItem("notes", JSON.stringify(n));
+        }
+        document.onmouseup = () => document.onmousemove = null;
+    }
 }
 
-function deleteNote(i) {
-    let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-    notes.splice(i, 1);
-    localStorage.setItem("notes", JSON.stringify(notes));
-    loadNotes();
+//------------------------------------------------
+// DATES
+//------------------------------------------------
+function loadDates() {
+    const list = datesList;
+    list.innerHTML = "";
+    let d = JSON.parse(localStorage.getItem("dates") || "[]");
+    d.sort((a,b)=>new Date(a.dt)-new Date(b.dt));
+    d.forEach((x,i)=> {
+        list.innerHTML += `
+            <div class="date-item">
+                <b>${x.t}</b><br>
+                <small>${new Date(x.dt).toLocaleString()}</small>
+                <br><button onclick="deleteItem('dates',${i},loadDates)">Delete</button>
+            </div>`;
+    });
 }
 
-
-// Dragging Notes
-function enableDrag(el, index) {
-    let offsetX, offsetY;
-
-    el.onmousedown = (e) => {
-        offsetX = e.clientX - el.offsetLeft;
-        offsetY = e.clientY - el.offsetTop;
-
-        document.onmousemove = (e) => {
-            el.style.left = (e.clientX - offsetX) + "px";
-            el.style.top = (e.clientY - offsetY) + "px";
-
-            let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-            notes[index].x = el.offsetLeft;
-            notes[index].y = el.offsetTop;
-            localStorage.setItem("notes", JSON.stringify(notes));
-        };
-
-        document.onmouseup = () => {
-            document.onmousemove = null;
-        };
-    };
+function addDate() {
+    if(!dateTitle.value || !dateValue.value) return;
+    saveItem("dates", { 
+        t: dateTitle.value, 
+        dt: `${dateValue.value}T${timeValue.value||"00:00"}`
+    });
+    dateTitle.value = dateValue.value = timeValue.value = "";
+    loadDates();
 }
 
+//------------------------------------------------
+// HELPERS
+//------------------------------------------------
+function saveItem(key, item) {
+    let d = JSON.parse(localStorage.getItem(key) || "[]");
+    d.push(item);
+    localStorage.setItem(key, JSON.stringify(d));
+}
 
-//---------------------------------------------------
+function deleteItem(key, i, cb) {
+    let d = JSON.parse(localStorage.getItem(key));
+    d.splice(i,1);
+    localStorage.setItem(key, JSON.stringify(d));
+    cb();
+}
+
+//------------------------------------------------
 // INIT
-//---------------------------------------------------
+//------------------------------------------------
 window.onload = () => {
     loadTemplates();
-    loadFolderShortcuts();
+    loadFolders();
     loadNotes();
+    loadDates();
 };
+``
