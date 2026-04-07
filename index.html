@@ -7,55 +7,58 @@
 </head>
 <body>
 
-    <nav class="tabs">
-        <button class="tab-btn active" data-tab="emailTab">Email Templates</button>
-        <button class="tab-btn" data-tab="fileTab">File Paths</button>
-        <button class="tab-btn" data-tab="todoTab">To-Do Board</button>
-    </nav>
+<nav class="tabs">
+    <button class="tab-btn active" data-tab="emailTab">Email</button>
+    <button class="tab-btn" data-tab="fileTab">File Paths</button>
+    <button class="tab-btn" data-tab="todoTab">To‑Do</button>
+    <button class="tab-btn" data-tab="datesTab">Dates</button>
+</nav>
 
-    <main>
+<main>
 
-        <!-- EMAIL TAB -->
-        <section id="emailTab" class="tab-page active">
-            <h2>Email Templates</h2>
+    <!-- EMAIL -->
+    <section id="emailTab" class="tab-page active">
+        <h2>Email Templates</h2>
+        <div class="input-area">
+            <input id="templateName" placeholder="Template name">
+            <textarea id="templateInput" placeholder="Email text..."></textarea>
+            <button onclick="addTemplate()">Add</button>
+        </div>
+        <div id="templateList" class="item-list"></div>
+    </section>
 
-            <div class="input-area">
-                <input id="templateName" placeholder="Template Name">
-                <textarea id="templateInput" placeholder="Write email template..."></textarea>
-                <button onclick="addTemplate()">Add Template</button>
-            </div>
+    <!-- FILE PATHS -->
+    <section id="fileTab" class="tab-page">
+        <h2>File Path Templates</h2>
+        <div class="input-area">
+            <input id="folderName" placeholder="Path name">
+            <input id="folderPath" placeholder="C:\\Folder\\Path">
+            <button onclick="addFolder()">Add</button>
+        </div>
+        <div id="folderList" class="item-list"></div>
+    </section>
 
-            <h3>Saved Templates</h3>
-            <div id="templateList" class="item-list"></div>
-        </section>
+    <!-- TODO -->
+    <section id="todoTab" class="tab-page">
+        <h2>Sticky Notes</h2>
+        <button onclick="addNote()">Add Sticky Note</button>
+        <div id="todoBoard" class="todo-board"></div>
+    </section>
 
-        <!-- FILE PATH TAB -->
-        <section id="fileTab" class="tab-page">
-            <h2>File Path Templates</h2>
+    <!-- DATES -->
+    <section id="datesTab" class="tab-page">
+        <h2>Important Dates</h2>
+        <div class="input-area">
+            <input id="dateTitle" placeholder="What happens?">
+            <input type="date" id="dateValue">
+            <input type="time" id="timeValue">
+            <button onclick="addDate()">Add Date</button>
+        </div>
+        <div id="datesList" class="item-list"></div>
+    </section>
 
-            <div class="input-area">
-                <input id="folderName" placeholder="Path Name">
-                <input id="folderPath" placeholder="C:\\Folder\\Path">
-                <button onclick="addFolderShortcut()">Add Path</button>
-            </div>
+</main>
 
-            <h3>Saved Paths</h3>
-            <div id="folderList" class="item-list"></div>
-        </section>
-
-        <!-- TO-DO TAB -->
-        <section id="todoTab" class="tab-page">
-            <h2>To-Do Sticky Notes</h2>
-
-            <div class="todo-controls">
-                <button onclick="addNote()">Add Sticky Note</button>
-            </div>
-
-            <div id="todoBoard" class="todo-board"></div>
-        </section>
-
-    </main>
-
-    <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
