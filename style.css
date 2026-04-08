@@ -45,7 +45,7 @@ main {
     margin-bottom: 15px;
 }
 
-/* Cards */
+/* Lists */
 .item-list {
     display: grid;
     gap: 10px;
@@ -57,19 +57,21 @@ main {
     border-radius: 6px;
 }
 
-/* Sticky Notes Layout */
+/* Sticky Notes grid */
 #todoBoard {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
+/* Columns */
 .todo-column {
     background: #dde3ea;
     padding: 10px;
     border-radius: 6px;
 }
 
+/* Notes */
 .note {
     background: #fff7ad;
     padding: 10px;
@@ -78,7 +80,7 @@ main {
 }
 
 .note h4 {
-    margin: 0 0 6px 0;
+    margin: 0 0 6px;
 }
 
 .note textarea {
@@ -95,7 +97,10 @@ main {
 .note.purple { background: #ead6ff; }
 .note.green { background: #ddffd6; }
 
-/* Dates color indicators */
-.date-item.green { border-left: 6px solid #4CAF50; }
-.date-item.yellow { border-left: 6px solid #FFC107; }
-.date-item.red { border-left: 6px solid #F44336; }
+/* Dates */
+.date-item {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+}
+``
