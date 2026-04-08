@@ -1,38 +1,4 @@
-<!DOCTYPE html>< <h2>Email Templates</h2>
-    <input id="templateName" placeholder="Template name">
-    <textarea id="templateInput" placeholder="Email text..."></textarea>
-    <button onclick="addTemplate()">Add</button>
-    <div id="templateList"></div>
-</section>
-
-<section id="fileTab" class="tab-page">
-    <h2>File Path Templates</h2>
-    <input id="folderName" placeholder="Path name">
-    <input id="folderPath" placeholder="C:\Folder\Path">
-    <button onclick="addFolder()">Add</button>
-    <div id="folderList"></div>
-</section>
-
-<section id="todoTab" class="tab-page">
-    <h2>Sticky Notes</h2>
-    <button onclick="addNote()">Add Sticky Note</button>
-    <div id="todoBoard"></div>
-</section>
-
-<section id="datesTab" class="tab-page">
-    <h2>Important Dates</h2>
-    <input id="dateTitle" placeholder="What happens?">
-    <input type="date" id="dateValue">
-    <button onclick="addDate()">Add Date</button>
-    <div id="datesList"></div>
-</section>
-
-</main>
-
-<script src="app.js"></script>
-</body>
-</html>
-``
+<!DOCTYPE html>
 <html lang="da">
 <head>
     <meta charset="UTF-8">
@@ -51,3 +17,44 @@
 <main>
 
 <section id="emailTab" class="tab-page active">
+    <h2>Email Templates</h2>
+    <div class="input-area">
+        <input id="templateName" placeholder="Template name">
+        <textarea id="templateInput" placeholder="Email text..."></textarea>
+        <button onclick="addTemplate()">Add</button>
+    </div>
+    <div id="templateList" class="item-list"></div>
+</section>
+
+<section id="fileTab" class="tab-page">
+    <h2>File Path Templates</h2>
+    <div class="input-area">
+        <input id="folderName" placeholder="Path name">
+        <input id="folderPath" placeholder="C:\Folder\Path">
+        <button onclick="addFolder()">Add</button>
+    </div>
+    <div id="folderList" class="item-list"></div>
+</section>
+
+<section id="todoTab" class="tab-page">
+    <h2>Sticky Notes</h2>
+    <button onclick="addNote()">Add Sticky Note</button>
+    <div id="todoBoard"></div>
+</section>
+
+<section id="datesTab" class="tab-page">
+    <h2>Important Dates</h2>
+    <div class="input-area">
+        <input id="dateTitle" placeholder="What happens?">
+        <input type="date" id="dateValue">
+        <button onclick="addDate()">Add Date</button>
+    </div>
+    <div id="datesList" class="item-list"></div>
+</section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
+``
