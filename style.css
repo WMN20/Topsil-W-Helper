@@ -1,9 +1,10 @@
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
     background: #f4f6f8;
-    margin: 0;
 }
 
+/* Tabs */
 .tabs {
     display: flex;
     background: #2b3d4f;
@@ -24,9 +25,38 @@ body {
     background: #1a9cff;
 }
 
-.tab-page { display: none; padding: 20px; }
-.tab-page.active { display: block; }
+main {
+    padding: 20px;
+}
 
+.tab-page {
+    display: none;
+}
+
+.tab-page.active {
+    display: block;
+}
+
+/* Inputs */
+.input-area {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.item-list {
+    display: grid;
+    gap: 10px;
+}
+
+.card {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+/* Sticky notes */
 #todoBoard {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -51,11 +81,11 @@ body {
 .note.purple { background: #ead6ff; }
 .note.green { background: #ddffd6; }
 
+/* Dates */
 .date-item {
     background: white;
     padding: 10px;
     border-radius: 6px;
-    margin-top: 10px;
 }
 
 .date-item.green { border-left: 6px solid #4CAF50; }
