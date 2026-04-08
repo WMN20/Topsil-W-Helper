@@ -18,13 +18,22 @@ function loadTemplates() {
     const data = JSON.parse(localStorage.getItem("templates") || "[]");
 
     data.forEach((t, i) => {
-        templateList.innerHTML += `
-            <div class="card">
-                <b>${t.name}</b><br>
-                <button onclick="navigator.clipboard.writeText(\`${t.text}\`)">Copy</button>
-                <button onclick="deleteItem('templates', ${i}, loadTemplates)">Delete</button>
-            </div>
-        `;
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const b = document.createElement("b");
+        b.textContent = t.name;
+
+        const copy = document.createElement("button");
+        copy.textContent = "Copy";
+        copy.onclick = () => navigator.clipboard.writeText(t.text);
+
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.onclick = () => deleteItem("templates", i, loadTemplates);
+
+        div.append(b, document.createElement("br"), copy, del);
+        templateList.appendChild(div);
     });
 }
 
@@ -46,13 +55,22 @@ function loadFolders() {
     const data = JSON.parse(localStorage.getItem("folders") || "[]");
 
     data.forEach((f, i) => {
-        folderList.innerHTML += `
-            <div class="card">
-                <b>${f.name}</b><br>
-                <button onclick="navigator.clipboard.writeText(\`${f.path}\`)">Copy Path</button>
-                <button onclick="deleteItem('folders', ${i}, loadFolders)">Delete</button>
-            </div>
-        `;
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const b = document.createElement("b");
+        b.textContent = f.name;
+
+        const copy = document.createElement("button");
+        copy.textContent = "Copy Path";
+        copy.onclick = () => navigator.clipboard.writeText(f.path);
+
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.onclick = () => deleteItem("folders", i, loadFolders);
+
+        div.append(b, document.createElement("br"), copy, del);
+        folderList.appendChild(div);
     });
 }
 
@@ -67,7 +85,7 @@ function addFolder() {
 }
 
 //------------------------------------------------
-// STICKY NOTES (FIXED)
+// STICKY NOTES (BUGFIXED)
 //------------------------------------------------
 function loadNotes() {
     todoBoard.innerHTML = "";
@@ -90,32 +108,39 @@ function createNote(note, index) {
     const div = document.createElement("div");
     div.className = `note ${note.color}`;
     div.style.left = note.x + "px";
-    div.style.top  = note.y + "px";
+    div.style.top = note.y + "px";
 
-    div.innerHTML = `
-        <h4 contenteditable
-            oninput="updateNote(${index}, 'title', this.innerText)">
-            ${note.title}
-        </h4>
+    // Title
+    const title = document.createElement("h4");
+    title.contentEditable = true;
+    title.textContent = note.title;
+    title.oninput = () => updateNote(index, "title", title.textContent);
 
-        <textarea
-            oninput="updateNote(${index}, 'text', this.value)">
-            ${note.text}
-        </textarea>
+    // Text (NO leading whitespace bug)
+    const textarea = document.createElement("textarea");
+    textarea.value = note.text;
+    textarea.oninput = () => updateNote(index, "text", textarea.value);
 
-        <select onchange="changeNoteColor(this, ${index})">
-            <option value="yellow">Yellow</option>
-            <option value="red">Red</option>
-            <option value="blue">Blue</option>
-            <option value="purple">Purple</option>
-            <option value="green">Green</option>
-        </select>
+    // Color select (instant update)
+    const select = document.createElement("select");
+    ["yellow","red","blue","purple","green"].forEach(c => {
+        const o = document.createElement("option");
+        o.value = c;
+        o.textContent = c;
+        select.appendChild(o);
+    });
+    select.value = note.color;
+    select.onchange = () => {
+        updateNote(index, "color", select.value);
+        div.className = `note ${select.value}`;
+    };
 
-        <button onclick="deleteNote(${index})">Delete</button>
-    `;
+    // Delete
+    const del = document.createElement("button");
+    del.textContent = "Delete";
+    del.onclick = () => deleteNote(index);
 
-    div.querySelector("select").value = note.color;
-
+    div.append(title, textarea, select, del);
     enableDrag(div, index);
     todoBoard.appendChild(div);
 }
@@ -126,15 +151,6 @@ function updateNote(index, key, value) {
     localStorage.setItem("notes", JSON.stringify(notes));
 }
 
-// ✅ IMMEDIATE color update
-function changeNoteColor(select, index) {
-    const notes = JSON.parse(localStorage.getItem("notes"));
-    notes[index].color = select.value;
-    localStorage.setItem("notes", JSON.stringify(notes));
-
-    select.parentElement.className = `note ${select.value}`;
-}
-
 function deleteNote(index) {
     const notes = JSON.parse(localStorage.getItem("notes"));
     notes.splice(index, 1);
@@ -142,18 +158,23 @@ function deleteNote(index) {
     loadNotes();
 }
 
-// ✅ PROPER drag logic (no jumping)
+// ✅ DRAG FIX – no teleporting
 function enableDrag(el, index) {
-    let offsetX = 0;
-    let offsetY = 0;
+    let startX, startY, startLeft, startTop;
 
     el.onmousedown = (e) => {
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
+        const rect = el.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = rect.left + window.scrollX;
+        startTop = rect.top + window.scrollY;
 
         document.onmousemove = (ev) => {
-            el.style.left = (ev.pageX - offsetX) + "px";
-            el.style.top  = (ev.pageY - offsetY) + "px";
+            const dx = ev.clientX - startX;
+            const dy = ev.clientY - startY;
+
+            el.style.left = startLeft + dx + "px";
+            el.style.top = startTop + dy + "px";
 
             const notes = JSON.parse(localStorage.getItem("notes"));
             notes[index].x = el.offsetLeft;
@@ -161,26 +182,34 @@ function enableDrag(el, index) {
             localStorage.setItem("notes", JSON.stringify(notes));
         };
 
-        document.onmouseup = () => {
-            document.onmousemove = null;
-        };
+        document.onmouseup = () => document.onmousemove = null;
     };
 }
 
 //------------------------------------------------
-// DATES (DANISH + TODAY MARK)
+// DATES + DANISH + COUNTDOWN
 //------------------------------------------------
 function loadDates() {
     datesList.innerHTML = "";
     let dates = JSON.parse(localStorage.getItem("dates") || "[]");
+    dates.sort((a,b)=>new Date(a.dt)-new Date(b.dt));
 
-    dates.sort((a, b) => new Date(a.dt) - new Date(b.dt));
-
-    const todayStr = new Date().toDateString();
+    const now = new Date();
 
     dates.forEach((d, i) => {
         const dateObj = new Date(d.dt);
-        const isToday = dateObj.toDateString() === todayStr;
+        const diffMs = dateObj - now;
+
+        let countdown;
+        if (diffMs < 0) {
+            countdown = "Forfalden";
+        } else {
+            const days = Math.floor(diffMs / (1000*60*60*24));
+            const hours = Math.floor((diffMs / (1000*60*60)) % 24);
+            countdown = days === 0
+                ? `I dag (${hours} timer)`
+                : `Om ${days} dage`;
+        }
 
         const formatted = dateObj.toLocaleDateString("da-DK", {
             weekday: "long",
@@ -194,13 +223,15 @@ function loadDates() {
             minute: "2-digit"
         });
 
-        datesList.innerHTML += `
-            <div class="date-item ${isToday ? "today" : ""}">
-                <b>${d.t}</b><br>
-                <small>${formatted} kl. ${time}</small><br>
-                <button onclick="deleteItem('dates', ${i}, loadDates)">Delete</button>
-            </div>
+        const div = document.createElement("div");
+        div.className = "date-item";
+        div.innerHTML = `
+            <b>${d.t}</b><br>
+            <small>${formatted} kl. ${time}</small><br>
+            <small><i>${countdown}</i></small><br>
+            <button onclick="deleteItem('dates', ${i}, loadDates)">Delete</button>
         `;
+        datesList.appendChild(div);
     });
 }
 
@@ -219,7 +250,7 @@ function addDate() {
 }
 
 //------------------------------------------------
-// HELPERS
+// HELPERS + INIT
 //------------------------------------------------
 function saveItem(key, item) {
     const data = JSON.parse(localStorage.getItem(key) || "[]");
@@ -234,9 +265,6 @@ function deleteItem(key, index, cb) {
     cb();
 }
 
-//------------------------------------------------
-// INIT
-//------------------------------------------------
 window.onload = () => {
     loadTemplates();
     loadFolders();
