@@ -1,5 +1,4 @@
-//------------------------------------------------
-// Tabs
+//------------------------------------------------//------------------------------------------------
 //------------------------------------------------
 document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.onclick = () => {
@@ -11,25 +10,45 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 });
 
 //------------------------------------------------
+// Helpers
+//------------------------------------------------
+function save(key, obj) {
+    const data = JSON.parse(localStorage.getItem(key) || "[]");
+    data.push(obj);
+    localStorage.setItem(key, JSON.stringify(data));
+}
+
+function removeItem(key, i, cb) {
+    const data = JSON.parse(localStorage.getItem(key));
+    data.splice(i, 1);
+    localStorage.setItem(key, JSON.stringify(data));
+    cb();
+}
+
+//------------------------------------------------
 // Email Templates
 //------------------------------------------------
 function loadTemplates() {
     templateList.innerHTML = "";
-    JSON.parse(localStorage.getItem("templates") || "[]").forEach((t, i) => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
+    JSON.parse(localStorage.getItem("templates") || []).forEach((t, i) => {
+        const d = document.createElement("div");
+        d.className = "card";
+        d.innerHTML = `
             <b>${t.name}</b><br>
             <button onclick="navigator.clipboard.writeText(\`${t.text}\`)">Copy</button>
-            <button onclick="remove('templates',${i},loadTemplates)">Delete</button>
+            <button onclick="removeItem('templates',${i},loadTemplates)">Delete</button>
         `;
-        templateList.appendChild(div);
+        templateList.appendChild(d);
     });
 }
 
 function addTemplate() {
-    save("templates", { name: templateName.value, text: templateInput.value });
-    templateName.value = templateInput.value = "";
+    save("templates", {
+        name: templateName.value,
+        text: templateInput.value
+    });
+    templateName.value = "";
+    templateInput.value = "";
     loadTemplates();
 }
 
@@ -38,26 +57,30 @@ function addTemplate() {
 //------------------------------------------------
 function loadFolders() {
     folderList.innerHTML = "";
-    JSON.parse(localStorage.getItem("folders") || "[]").forEach((f, i) => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
+    JSON.parse(localStorage.getItem("folders") || []).forEach((f, i) => {
+        const d = document.createElement("div");
+        d.className = "card";
+        d.innerHTML = `
             <b>${f.name}</b><br>
             <button onclick="navigator.clipboard.writeText(\`${f.path}\`)">Copy Path</button>
-            <button onclick="remove('folders',${i},loadFolders)">Delete</button>
+            <button onclick="removeItem('folders',${i},loadFolders)">Delete</button>
         `;
-        folderList.appendChild(div);
+        folderList.appendChild(d);
     });
 }
 
 function addFolder() {
-    save("folders", { name: folderName.value, path: folderPath.value });
-    folderName.value = folderPath.value = "";
+    save("folders", {
+        name: folderName.value,
+        path: folderPath.value
+    });
+    folderName.value = "";
+    folderPath.value = "";
     loadFolders();
 }
 
 //------------------------------------------------
-// Sticky Notes (2 columns, grid-like)
+// Sticky Notes (GRID VERSION)
 //------------------------------------------------
 function loadNotes() {
     todoBoard.innerHTML = `
@@ -66,24 +89,24 @@ function loadNotes() {
     `;
 
     const cols = todoBoard.querySelectorAll(".todo-column");
-    JSON.parse(localStorage.getItem("notes") || "[]").forEach((n, i) => {
+    JSON.parse(localStorage.getItem("notes") || []).forEach((n, i) => {
         const note = document.createElement("div");
         note.className = `note ${n.color}`;
         note.innerHTML = `
-            <h4 contenteditable oninput="updateNote(${i}, 'title', this.innerText)">${n.title}</h4>
-            <textarea oninput="updateNote(${i}, 'text', this.value)">${n.text}</textarea>
-            <select onchange="updateColor(${i}, this.value)">
+            <h4 contenteditable oninput="updateNote(${i},'title',this.innerText)">${n.title}</h4>
+            <textarea oninput="updateNote(${i},'text',this.value)">${n.text}</textarea>
+            <select onchange="updateNote(${i},'color',this.value); loadNotes();">
                 <option value="yellow">Yellow</option>
                 <option value="red">Red</option>
                 <option value="blue">Blue</option>
                 <option value="purple">Purple</option>
                 <option value="green">Green</option>
             </select>
-            <select onchange="updateNote(${i}, 'priority', this.value); loadNotes();">
+            <select onchange="updateNote(${i},'priority',this.value); loadNotes();">
                 <option value="important">Vigtig</option>
                 <option value="normal">Mindre vigtig</option>
             </select>
-            <button onclick="remove('notes',${i},loadNotes)">Delete</button>
+            <button onclick="removeItem('notes',${i},loadNotes)">Delete</button>
         `;
         note.querySelectorAll("select")[0].value = n.color;
         note.querySelectorAll("select")[1].value = n.priority;
@@ -107,54 +130,31 @@ function updateNote(i, k, v) {
     localStorage.setItem("notes", JSON.stringify(n));
 }
 
-function updateColor(i, v) {
-    updateNote(i, "color", v);
-    loadNotes();
-}
-
 //------------------------------------------------
-// Dates (Danish + color rules)
+// Dates (SIMPLE, STABLE)
 //------------------------------------------------
 function loadDates() {
     datesList.innerHTML = "";
-    const now = new Date();
-    JSON.parse(localStorage.getItem("dates") || [])
-        .sort((a,b)=>new Date(a.dt)-new Date(b.dt))
-        .forEach((d,i)=>{
-            const dt = new Date(d.dt);
-            const days = Math.ceil((dt-now)/(1000*60*60*24));
-            const color = days<=3 ? "red" : days<=7 ? "yellow" : "green";
-            const div = document.createElement("div");
-            div.className = `date-item ${color}`;
-            div.innerHTML = `
-                <b>${d.t}</b><br>
-                <small>${dt.toLocaleDateString("da-DK",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</small><br>
-                <small>Om ${days} dage</small><br>
-                <button onclick="remove('dates',${i},loadDates)">Delete</button>
-            `;
-            datesList.appendChild(div);
-        });
+    JSON.parse(localStorage.getItem("dates") || []).forEach((d, i) => {
+        const div = document.createElement("div");
+        div.className = "date-item";
+        div.innerHTML = `
+            <b>${d.title}</b><br>
+            <small>${d.date}</small><br>
+            <button onclick="removeItem('dates',${i},loadDates)">Delete</button>
+        `;
+        datesList.appendChild(div);
+    });
 }
 
 function addDate() {
-    save("dates",{ t:dateTitle.value, dt:`${dateValue.value}T${timeValue.value||"00:00"}` });
-    dateTitle.value = dateValue.value = timeValue.value = "";
+    save("dates", {
+        title: dateTitle.value,
+        date: dateValue.value
+    });
+    dateTitle.value = "";
+    dateValue.value = "";
     loadDates();
-}
-
-//------------------------------------------------
-// Helpers
-//------------------------------------------------
-function save(key,obj){
-    const d = JSON.parse(localStorage.getItem(key)||"[]");
-    d.push(obj);
-    localStorage.setItem(key,JSON.stringify(d));
-}
-function remove(key,i,cb){
-    const d = JSON.parse(localStorage.getItem(key));
-    d.splice(i,1);
-    localStorage.setItem(key,JSON.stringify(d));
-    cb();
 }
 
 //------------------------------------------------
@@ -164,3 +164,4 @@ window.onload = () => {
     loadNotes();
     loadDates();
 };
+``
