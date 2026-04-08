@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
     <title>W-Helper</title>
@@ -10,7 +10,7 @@
 <nav class="tabs">
     <button class="tab-btn active" data-tab="emailTab">Email</button>
     <button class="tab-btn" data-tab="fileTab">File Paths</button>
-    <button class="tab-btn" data-tab="todoTab">To‑Do</button>
+    <button class="tab-btn" data-tab="todoTab">Sticky Notes</button>
     <button class="tab-btn" data-tab="datesTab">Dates</button>
 </nav>
 
@@ -39,7 +39,7 @@
     <section id="todoTab" class="tab-page">
         <h2>Sticky Notes</h2>
         <button onclick="addNote()">Add Sticky Note</button>
-        <div id="todoBoard" class="todo-board"></div>
+        <div id="todoBoard"></div>
     </section>
 
     <section id="datesTab" class="tab-page">
@@ -58,4 +58,3 @@
 <script src="app.js"></script>
 </body>
 </html>
-``
