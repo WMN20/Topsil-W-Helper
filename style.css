@@ -1,132 +1,39 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-}
-
-/* Tabs */
-.tabs {
-    display: flex;
-    background: #2b3d4f;
-    padding: 10px;
-}
-
-.tab-btn {
-    background: #415a70;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    margin-right: 8px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.tab-btn.active {
-    background: #1a9cff;
-}
-
-main {
+/* --- TODO GRID SYSTEM --- */
+.todo-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
     padding: 20px;
 }
 
-.tab-page {
-    display: none;
-}
-
-.tab-page.active {
-    display: block;
-}
-
-/* Inputs */
-.input-area {
-    background: white;
-    padding: 15px;
+/* Columns */
+.todo-column {
+    background: #dde3ea;
     border-radius: 6px;
-    margin-bottom: 15px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-.input-area input,
-.input-area textarea {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
-}
-
-.input-area button {
-    background: #1a9cff;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* Lists */
-.item-list {
-    display: grid;
-    gap: 10px;
-}
-
-.card {
-    background: white;
     padding: 10px;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-
-.card button {
-    margin-top: 6px;
-    margin-right: 6px;
-}
-
-/* Todo board */
-.todo-board {
     position: relative;
-    height: 600px;
-    background: #e6ebf1;
-    border-radius: 6px;
-    margin-top: 10px;
 }
 
-/* Sticky notes */
+.todo-column h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+/* Sticky notes stay same size */
 .note {
     position: absolute;
-    width: 220px;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: grab;
-    box-shadow: 0 3px 6px rgba(0,0,0,.2);
+    width: 200px;
 }
 
-.note h4 {
-    margin: 0 0 6px 0;
-    font-size: 15px;
+/* --- DATE PRIORITY COLORS --- */
+.date-item.green {
+    border-left: 6px solid #4CAF50;
 }
 
-.note textarea {
-    width: 100%;
-    height: 80px;
-    border: none;
-    background: transparent;
-    resize: none;
+.date-item.yellow {
+    border-left: 6px solid #FFC107;
 }
 
-/* Note colors */
-.note.yellow { background: #fff7ad; }
-.note.red { background: #ffd6d6; }
-.note.blue { background: #d6ecff; }
-.note.purple { background: #ead6ff; }
-.note.green { background: #ddffd6; }
-
-/* Dates */
-.date-item {
-    background: white;
-    padding: 12px;
-    border-radius: 6px;
+.date-item.red {
+    border-left: 6px solid #F44336;
 }
-
-.date-item.today {
-    border-left: 5px solid #1a9cff;
-}
-``
