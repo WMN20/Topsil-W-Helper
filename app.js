@@ -27,15 +27,15 @@ function removeItem(key, i, cb) {
 }
 
 //------------------------------------------------
-// Dates (FIXED logic, date-only)
+// Dates – KORREKT DAG-LOGIK (ingen tid)
 //------------------------------------------------
 function loadDates() {
     datesList.innerHTML = "";
 
-    const dates = JSON.parse(localStorage.getItem("dates") || []);
     const today = new Date();
     today.setHours(0,0,0,0);
 
+    const dates = JSON.parse(localStorage.getItem("dates") || []);
     dates.sort((a,b)=> new Date(a.date) - new Date(b.date));
 
     dates.forEach((d,i) => {
@@ -51,7 +51,7 @@ function loadDates() {
             diffDays <= 7 ? "yellow" :
             "green";
 
-        let text =
+        let status =
             diffDays === 0 ? "I dag" :
             diffDays > 0 ? `Om ${diffDays} dage` :
             "Forfalden";
@@ -60,16 +60,17 @@ function loadDates() {
         div.className = `date-item ${color}`;
         div.innerHTML = `
             <b>${d.title}</b><br>
-            <small>${eventDate.toLocaleDateString("da-DK", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-            })}</small><br>
-            <small>${text}</small><br>
+            <small>
+                ${eventDate.toLocaleDateString("da-DK", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                })}
+            </small><br>
+            <small>${status}</small><br>
             <button onclick="removeItem('dates',${i},loadDates)">Delete</button>
         `;
-
         datesList.appendChild(div);
     });
 }
@@ -88,4 +89,6 @@ function addDate() {
 }
 
 //------------------------------------------------
-window.onload = loadDates;
+window.onload = () => {
+    loadDates();
+};
