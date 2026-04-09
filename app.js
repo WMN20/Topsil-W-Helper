@@ -1,4 +1,5 @@
-//------------------------------------------------//------------------------------------------------
+//------------------------------------------------
+// Tabs
 //------------------------------------------------
 document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.onclick = () => {
@@ -26,61 +27,44 @@ function removeItem(key, i, cb) {
 }
 
 //------------------------------------------------
-// Email Templates
+// Sticky Note Color Legend
 //------------------------------------------------
-function loadTemplates() {
-    templateList.innerHTML = "";
-    JSON.parse(localStorage.getItem("templates") || []).forEach((t, i) => {
-        const d = document.createElement("div");
-        d.className = "card";
-        d.innerHTML = `
-            <b>${t.name}</b><br>
-            <button onclick="navigator.clipboard.writeText(\`${t.text}\`)">Copy</button>
-            <button onclick="removeItem('templates',${i},loadTemplates)">Delete</button>
+const COLORS = ["yellow", "red", "blue", "purple", "green"];
+
+function loadLegend() {
+    colorLegend.innerHTML = "";
+    const data = JSON.parse(localStorage.getItem("legend") || "{}");
+
+    COLORS.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "legend-item";
+        div.innerHTML = `
+            <div class="legend-color" style="background:${getColorHex(c)}"></div>
+            <input value="${data[c] || ""}" placeholder="Meaning..."
+                oninput="updateLegend('${c}', this.value)">
         `;
-        templateList.appendChild(d);
+        colorLegend.appendChild(div);
     });
 }
 
-function addTemplate() {
-    save("templates", {
-        name: templateName.value,
-        text: templateInput.value
-    });
-    templateName.value = "";
-    templateInput.value = "";
-    loadTemplates();
+function updateLegend(color, text) {
+    const l = JSON.parse(localStorage.getItem("legend") || "{}");
+    l[color] = text;
+    localStorage.setItem("legend", JSON.stringify(l));
 }
 
-//------------------------------------------------
-// File Paths
-//------------------------------------------------
-function loadFolders() {
-    folderList.innerHTML = "";
-    JSON.parse(localStorage.getItem("folders") || []).forEach((f, i) => {
-        const d = document.createElement("div");
-        d.className = "card";
-        d.innerHTML = `
-            <b>${f.name}</b><br>
-            <button onclick="navigator.clipboard.writeText(\`${f.path}\`)">Copy Path</button>
-            <button onclick="removeItem('folders',${i},loadFolders)">Delete</button>
-        `;
-        folderList.appendChild(d);
-    });
-}
-
-function addFolder() {
-    save("folders", {
-        name: folderName.value,
-        path: folderPath.value
-    });
-    folderName.value = "";
-    folderPath.value = "";
-    loadFolders();
+function getColorHex(c) {
+    return {
+        yellow: "#fff7ad",
+        red: "#ffd6d6",
+        blue: "#d6ecff",
+        purple: "#ead6ff",
+        green: "#ddffd6"
+    }[c];
 }
 
 //------------------------------------------------
-// Sticky Notes (GRID VERSION)
+// Sticky Notes
 //------------------------------------------------
 function loadNotes() {
     todoBoard.innerHTML = `
@@ -96,11 +80,7 @@ function loadNotes() {
             <h4 contenteditable oninput="updateNote(${i},'title',this.innerText)">${n.title}</h4>
             <textarea oninput="updateNote(${i},'text',this.value)">${n.text}</textarea>
             <select onchange="updateNote(${i},'color',this.value); loadNotes();">
-                <option value="yellow">Yellow</option>
-                <option value="red">Red</option>
-                <option value="blue">Blue</option>
-                <option value="purple">Purple</option>
-                <option value="green">Green</option>
+                ${COLORS.map(c => `<option value="${c}">${c}</option>`).join("")}
             </select>
             <select onchange="updateNote(${i},'priority',this.value); loadNotes();">
                 <option value="important">Vigtig</option>
@@ -131,16 +111,25 @@ function updateNote(i, k, v) {
 }
 
 //------------------------------------------------
-// Dates (SIMPLE, STABLE)
+// Dates with color logic
 //------------------------------------------------
 function loadDates() {
     datesList.innerHTML = "";
+    const today = new Date();
+
     JSON.parse(localStorage.getItem("dates") || []).forEach((d, i) => {
+        const target = new Date(d.date);
+        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+
+        let cls = "date-green";
+        if (diffDays <= 3) cls = "date-red";
+        else if (diffDays <= 7) cls = "date-yellow";
+
         const div = document.createElement("div");
-        div.className = "date-item";
+        div.className = `date-item ${cls}`;
         div.innerHTML = `
             <b>${d.title}</b><br>
-            <small>${d.date}</small><br>
+            <small>${d.date} (${diffDays} days)</small><br>
             <button onclick="removeItem('dates',${i},loadDates)">Delete</button>
         `;
         datesList.appendChild(div);
@@ -159,9 +148,7 @@ function addDate() {
 
 //------------------------------------------------
 window.onload = () => {
-    loadTemplates();
-    loadFolders();
+    loadLegend();
     loadNotes();
     loadDates();
 };
-``
