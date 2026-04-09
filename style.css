@@ -57,30 +57,23 @@ main {
     border-radius: 6px;
 }
 
-/* Sticky Notes grid */
+/* Sticky Notes */
 #todoBoard {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-/* Columns */
 .todo-column {
     background: #dde3ea;
     padding: 10px;
     border-radius: 6px;
 }
 
-/* Notes */
 .note {
-    background: #fff7ad;
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 10px;
-}
-
-.note h4 {
-    margin: 0 0 6px;
 }
 
 .note textarea {
@@ -97,10 +90,27 @@ main {
 .note.purple { background: #ead6ff; }
 .note.green { background: #ddffd6; }
 
+/* Color legend */
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.legend-color {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+}
+
 /* Dates */
 .date-item {
-    background: white;
     padding: 10px;
     border-radius: 6px;
+    color: #333;
 }
-``
+
+.date-red { background: #ffd6d6; }
+.date-yellow { background: #fff7ad; }
+.date-green { background: #ddffd6; }
